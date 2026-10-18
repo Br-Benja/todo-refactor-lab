@@ -28,9 +28,8 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | Misión | Driver | Navigator | Commit / evidencia |
 |---|---|---|---|
 | 00 | Benjamín | Leonardo | Starter Project con Vitest y `.gitignore` |
-| M0 | Leonardo | Benjamín | Análisis del legacy y 5 comportamientos a conservar · `evidencias/m00-legacy-inyeccion.png` |
+| M0 | Leonardo | Benjamín | Análisis del legacy y 5 comportamientos a conservar · `evidencias/m00-legacy-inyeccion.jpeg` |
 | M1 | Benjamín | Leonardo | Tareas como objetos `{id, titulo, completada}` + 2 pruebas · `evidencias/m01-pruebas-verde.png` |
-| M1 | | | |
 | M2 | | | |
 | M3 | | | |
 | M4 | | | |
