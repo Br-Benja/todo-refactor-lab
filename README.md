@@ -28,9 +28,9 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | Misión | Driver | Navigator | Commit / evidencia |
 |---|---|---|---|
 | 00 | Benjamín | Leonardo | Starter Project con Vitest y `.gitignore` |
-| M0 | Leonardo | Benjamín | Análisis del legacy y 5 comportamientos a conservar · `evidencias/m00-legacy-inyeccion.jpeg` |
+| M0 | Leonardo | Benjamín | Análisis del legacy y 5 comportamientos a conservar · `evidencias/m00-legacy-inyeccion.png` |
 | M1 | Benjamín | Leonardo | Tareas como objetos `{id, titulo, completada}` + 2 pruebas · `evidencias/m01-pruebas-verde.png` |
-| M2 | Leonardo | Benjamín | `crearTarea` con la prueba escrita primero (RED → GREEN) · `evidencias/m02-red.png`, `evidencias/m02-green.png` |
+| M2 | Leonardo | Benjamín | `crearTarea` con la prueba escrita primero (RED → GREEN) · `evidencias/m02-red.png`, `evidencias/m02-green.jpeg` |
 | M3 | | | |
 | M4 | | | |
 | M5 | | | |
@@ -85,5 +85,11 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 ## Extensión elegida (Misión 11)
 
 ## Evidencia
+### Registro de una prueba que inicialmente falló (Misión 2)
+- **Prueba:** `crea una tarea pendiente con id y título`.
+- **ROJO:** se escribió antes de que existiera la función. Resultado: `TypeError: (0 , crearTarea) is not a function` (1 failed | 2 passed). Evidencia: `evidencias/m02-red.png` (resumen) y `evidencias/m02-red-error.png` (detalle del error, reproducido quitando temporalmente el `export`).
+- **Por qué falló:** `taskService.js` todavía no exportaba `crearTarea`.
+- **GREEN:** se implementó el mínimo código (`return { id, titulo, completada: false }`). Resultado: 3 passed. Evidencia: `evidencias/m02-green.png`.
+- **REFACTOR:** no hizo falta; la función ya es una sola línea clara.
 
 ## Reflexión de pareja (200–250 palabras)
