@@ -28,8 +28,8 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | Misión | Driver | Navigator | Commit / evidencia |
 |---|---|---|---|
 | 00 | Benjamín | Leonardo | Starter Project con Vitest y `.gitignore` |
-| M0 | Leonardo | Benjamín | Análisis del legacy y 5 comportamientos a conservar |
-| M0 | | | |
+| M0 | Leonardo | Benjamín | Análisis del legacy y 5 comportamientos a conservar · `evidencias/m00-legacy-inyeccion.png` |
+| M1 | Benjamín | Leonardo | Tareas como objetos `{id, titulo, completada}` + 2 pruebas · `evidencias/m01-pruebas-verde.png` |
 | M1 | | | |
 | M2 | | | |
 | M3 | | | |
@@ -71,6 +71,12 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 ## Pruebas de integración manual
 
 ## Decisiones de refactor
+### 1. De string a objeto (Misión 1)
+- **Antes:** `"Diseñar pruebas"`. La identidad era el índice y no había dónde guardar si estaba terminada.
+- **Después:** `{ id: 2, titulo: "Diseñar pruebas", completada: false }`.
+- **Por qué:** el `id` no cambia al eliminar otras tareas y `completada` vive dentro de la tarea, sin arreglos paralelos. Agregar prioridad o fecha después solo implica agregar una propiedad.
+- **Qué pertenece a la tarea y qué a la interfaz:** `id`, `titulo` y `completada` son datos de la tarea. La clase CSS `completada`, el texto del botón, el filtro seleccionado y el mensaje de error son de la interfaz, así que no van en el objeto.
+- **Pruebas que lo protegen:** los títulos y el orden del legacy se conservan; los ids son únicos y todas las tareas empiezan pendientes.
 
 ## Extensión elegida (Misión 11)
 
