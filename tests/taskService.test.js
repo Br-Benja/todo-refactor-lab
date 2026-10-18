@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { tareasIniciales } from "../src/taskService.js";
+import { tareasIniciales, crearTarea } from "../src/taskService.js";
 
 // Las pruebas de cada misión se agregan en este archivo.
 // Cada prueba sigue la estructura Arrange → Act → Assert.
@@ -27,5 +27,24 @@ describe("Misión 1 · modelo de tareas", () => {
     // Assert
     expect(idsUnicos.size).toBe(tareas.length);
     expect(todasPendientes).toBe(true);
+  });
+});
+
+
+describe("Misión 2 · crearTarea", () => {
+  it("crea una tarea pendiente con id y título", () => {
+    // Arrange
+    const id = 10;
+    const titulo = "Diseñar pruebas";
+
+    // Act
+    const tarea = crearTarea(id, titulo);
+
+    // Assert
+    expect(tarea).toEqual({
+      id: 10,
+      titulo: "Diseñar pruebas",
+      completada: false
+    });
   });
 });

@@ -30,7 +30,7 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | 00 | Benjamín | Leonardo | Starter Project con Vitest y `.gitignore` |
 | M0 | Leonardo | Benjamín | Análisis del legacy y 5 comportamientos a conservar · `evidencias/m00-legacy-inyeccion.jpeg` |
 | M1 | Benjamín | Leonardo | Tareas como objetos `{id, titulo, completada}` + 2 pruebas · `evidencias/m01-pruebas-verde.png` |
-| M2 | | | |
+| M2 | Leonardo | Benjamín | `crearTarea` con la prueba escrita primero (RED → GREEN) · `evidencias/m02-red.png`, `evidencias/m02-green.png` |
 | M3 | | | |
 | M4 | | | |
 | M5 | | | |
@@ -66,6 +66,11 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 5. El total siempre coincide con el número de tareas mostradas.
 
 ## Casos de prueba
+| # | Función | Caso | Tipo | Resultado esperado |
+|---|---|---|---|---|
+| 1 | `tareasIniciales` | Conserva los 3 títulos del legacy en orden | Normal | `["Revisar requisitos", "Diseñar pruebas", "Refactorizar código"]` |
+| 2 | `tareasIniciales` | Ids únicos y todas pendientes | Normal | `Set` del mismo tamaño y `every` → `true` |
+| 3 | `crearTarea` | `crearTarea(10, "Diseñar pruebas")` | Normal | `{ id: 10, titulo: "Diseñar pruebas", completada: false }` |
 
 ## Pruebas de integración manual
 

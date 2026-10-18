@@ -11,7 +11,12 @@ export const tareasIniciales = [
   { id: 3, titulo: "Refactorizar código", completada: false }
 ];
 
-// Misión 2 · crearTarea(id, titulo)
+// Misión 2 · Toda tarea nueva nace pendiente.
+export function crearTarea(id, titulo) {
+  return { id, titulo, completada: false };
+}
+
+// Pendientes:
 // Misión 3 · agregarTarea(tareas, nuevaTarea)
 // Misión 4 · buscarTarea(tareas, id)             -> find()
 // Misión 5 · obtenerPendientes(tareas)            -> filter()
