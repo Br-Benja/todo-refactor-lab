@@ -16,8 +16,12 @@ export function crearTarea(id, titulo) {
   return { id, titulo, completada: false };
 }
 
+// Misión 3 · Devuelve una colección nueva; no modifica la recibida.
+export function agregarTarea(tareas, nuevaTarea) {
+  return [...tareas, nuevaTarea];
+}
+
 // Pendientes:
-// Misión 3 · agregarTarea(tareas, nuevaTarea)
 // Misión 4 · buscarTarea(tareas, id)             -> find()
 // Misión 5 · obtenerPendientes(tareas)            -> filter()
 //            obtenerTerminadas(tareas)            -> filter()

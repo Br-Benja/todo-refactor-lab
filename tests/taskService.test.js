@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { tareasIniciales, crearTarea } from "../src/taskService.js";
+import { tareasIniciales, crearTarea, agregarTarea } from "../src/taskService.js";
 
 // Las pruebas de cada misión se agregan en este archivo.
 // Cada prueba sigue la estructura Arrange → Act → Assert.
@@ -46,5 +46,43 @@ describe("Misión 2 · crearTarea", () => {
       titulo: "Diseñar pruebas",
       completada: false
     });
+  });
+});
+
+
+describe("Misión 3 · agregarTarea", () => {
+  it("agrega la nueva tarea al final", () => {
+    // Arrange
+    const tareas = [crearTarea(1, "Revisar requisitos")];
+    const nueva = crearTarea(2, "Diseñar pruebas");
+
+    // Act
+    const resultado = agregarTarea(tareas, nueva);
+
+    // Assert
+    expect(resultado.at(-1)).toEqual(nueva);
+  });
+
+  it("el resultado tiene exactamente un elemento más", () => {
+    // Arrange
+    const tareas = [crearTarea(1, "Revisar requisitos"), crearTarea(2, "Diseñar pruebas")];
+
+    // Act
+    const resultado = agregarTarea(tareas, crearTarea(3, "Refactorizar código"));
+
+    // Assert
+    expect(resultado).toHaveLength(tareas.length + 1);
+  });
+
+  it("no modifica el arreglo original", () => {
+    // Arrange
+    const tareas = [crearTarea(1, "Revisar requisitos")];
+
+    // Act
+    const resultado = agregarTarea(tareas, crearTarea(2, "Diseñar pruebas"));
+
+    // Assert
+    expect(tareas).toHaveLength(1);
+    expect(resultado).not.toBe(tareas);
   });
 });

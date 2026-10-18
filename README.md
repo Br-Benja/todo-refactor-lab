@@ -31,7 +31,7 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | M0 | Leonardo | Benjamín | Análisis del legacy y 5 comportamientos a conservar · `evidencias/m00-legacy-inyeccion.png` |
 | M1 | Benjamín | Leonardo | Tareas como objetos `{id, titulo, completada}` + 2 pruebas · `evidencias/m01-pruebas-verde.png` |
 | M2 | Leonardo | Benjamín | `crearTarea` con la prueba escrita primero (RED → GREEN) · `evidencias/m02-red.png`, `evidencias/m02-green.jpeg` |
-| M3 | | | |
+| M3 | Benjamín | Leonardo | `agregarTarea` devuelve un arreglo nuevo + 3 pruebas · `evidencias/m03-verde.png` |
 | M4 | | | |
 | M5 | | | |
 | M6 | | | |
@@ -71,6 +71,9 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 | 1 | `tareasIniciales` | Conserva los 3 títulos del legacy en orden | Normal | `["Revisar requisitos", "Diseñar pruebas", "Refactorizar código"]` |
 | 2 | `tareasIniciales` | Ids únicos y todas pendientes | Normal | `Set` del mismo tamaño y `every` → `true` |
 | 3 | `crearTarea` | `crearTarea(10, "Diseñar pruebas")` | Normal | `{ id: 10, titulo: "Diseñar pruebas", completada: false }` |
+| 4 | `agregarTarea` | Agrega una tarea | Normal | La nueva tarea queda al final |
+| 5 | `agregarTarea` | Tamaño del resultado | Normal | `length` del original + 1 |
+| 6 | `agregarTarea` | Inmutabilidad | Frontera | El original sigue con 1 elemento y el resultado es otro arreglo |
 
 ## Pruebas de integración manual
 
@@ -81,6 +84,12 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 - **Por qué:** el `id` no cambia al eliminar otras tareas y `completada` vive dentro de la tarea, sin arreglos paralelos. Agregar prioridad o fecha después solo implica agregar una propiedad.
 - **Qué pertenece a la tarea y qué a la interfaz:** `id`, `titulo` y `completada` son datos de la tarea. La clase CSS `completada`, el texto del botón, el filtro seleccionado y el mensaje de error son de la interfaz, así que no van en el objeto.
 - **Pruebas que lo protegen:** los títulos y el orden del legacy se conservan; los ids son únicos y todas las tareas empiezan pendientes.
+
+### 2. Agregar sin DOM y sin mutar (Misión 3)
+- **Antes:** `tareas.push(entrada.value.trim())` dentro del evento submit, seguido de `mostrarTareas()`.
+- **Después:** `agregarTarea(tareas, nuevaTarea)` devuelve `[...tareas, nuevaTarea]`.
+- **Por qué:** la función solo transforma datos; no lee el input ni dibuja nada, así que se prueba sin navegador.
+- **Pregunta del caso:** si `agregarTarea` modificara el arreglo recibido, la prueba "no modifica el arreglo original" lo detecta. Lo comprobamos con una versión que usaba `push`: fallaron 2 pruebas. También falló "un elemento más", porque `tareas.length` ya había crecido.
 
 ## Extensión elegida (Misión 11)
 
