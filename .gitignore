@@ -1,0 +1,9 @@
+# Dependencias instaladas con npm install (nunca se suben)
+node_modules/
+
+# Archivos generados
+coverage/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

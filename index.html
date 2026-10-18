@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToDo Refactor Lab</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="encabezado">
+      <span class="etiqueta">INGENIERÍA DE SOFTWARE · REFACTOR + UNIT TESTING</span>
+      <h1>ToDo Refactor Lab</h1>
+      <p>Lista de tareas para practicar refactorización y pruebas unitarias.</p>
+    </header>
+
+    <section class="panel">
+      <form id="formTarea" class="formulario" autocomplete="off">
+        <label for="tituloTarea">Nueva tarea</label>
+        <div class="fila">
+          <input type="text" id="tituloTarea" placeholder="Ej. Revisar requisitos">
+          <button type="submit" id="btnAgregar">Agregar</button>
+        </div>
+        <p id="mensaje" class="mensaje" aria-live="polite"></p>
+      </form>
+
+      <div class="controles">
+        <label for="filtro">Mostrar</label>
+        <select id="filtro">
+          <option value="todas">Todas</option>
+          <option value="pendientes">Pendientes</option>
+          <option value="terminadas">Terminadas</option>
+        </select>
+      </div>
+
+      <ul id="listaTareas" class="lista"></ul>
+
+      <p id="resumen" class="resumen">Total: 0</p>
+    </section>
+  </main>
+
+  <!-- Versión inicial (legacy). En la Misión 9 se reemplaza por src/app.js -->
+  <script src="src/legacy.js"></script>
+  <!-- <script type="module" src="src/app.js"></script> -->
+</body>
+</html>

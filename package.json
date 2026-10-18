@@ -1,0 +1,14 @@
+{
+  "name": "todo-refactor-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ToDo Refactor Lab: refactorización y pruebas unitarias con Vitest",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  }
+}
