@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { tareasIniciales, crearTarea, agregarTarea } from "../src/taskService.js";
+import { tareasIniciales, crearTarea, agregarTarea, buscarTarea } from "../src/taskService.js";;
 
 // Las pruebas de cada misión se agregan en este archivo.
 // Cada prueba sigue la estructura Arrange → Act → Assert.
@@ -84,5 +84,40 @@ describe("Misión 3 · agregarTarea", () => {
     // Assert
     expect(tareas).toHaveLength(1);
     expect(resultado).not.toBe(tareas);
+  });
+});
+
+describe("Misión 4 · buscarTarea", () => {
+  it("encuentra la tarea con un id existente", () => {
+    // Arrange
+    const tareas = [crearTarea(1, "Revisar requisitos"), crearTarea(2, "Diseñar pruebas")];
+
+    // Act
+    const encontrada = buscarTarea(tareas, 2);
+
+    // Assert
+    expect(encontrada).toEqual({ id: 2, titulo: "Diseñar pruebas", completada: false });
+  });
+
+  it("devuelve undefined si el id no existe", () => {
+    // Arrange
+    const tareas = [crearTarea(1, "Revisar requisitos")];
+
+    // Act
+    const encontrada = buscarTarea(tareas, 99);
+
+    // Assert
+    expect(encontrada).toBeUndefined();
+  });
+
+  it("devuelve undefined en una colección vacía", () => {
+    // Arrange
+    const tareas = [];
+
+    // Act
+    const encontrada = buscarTarea(tareas, 1);
+
+    // Assert
+    expect(encontrada).toBeUndefined();
   });
 });

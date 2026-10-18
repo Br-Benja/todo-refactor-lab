@@ -29,10 +29,9 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 |---|---|---|---|
 | 00 | Benjamín | Leonardo | Starter Project con Vitest y `.gitignore` |
 | M0 | Leonardo | Benjamín | Análisis del legacy y 5 comportamientos a conservar · `evidencias/m00-legacy-inyeccion.png` |
-| M1 | Benjamín | Leonardo | Tareas como objetos `{id, titulo, completada}` + 2 pruebas · `evidencias/m01-pruebas-verde.png` |
-| M2 | Leonardo | Benjamín | `crearTarea` con la prueba escrita primero (RED → GREEN) · `evidencias/m02-red.png`, `evidencias/m02-green.jpeg` |
-| M3 | Benjamín | Leonardo | `agregarTarea` devuelve un arreglo nuevo + 3 pruebas · `evidencias/m03-verde.png` |
-| M4 | | | |
+| M1 | Benjamín | Leonardo | Tareas como objetos `{id, titulo, completada}` + 2 pruebas · `evidencias/m01-pruebas-verde.jpeg` |
+| M2 | Leonardo | Benjamín | `crearTarea` con la prueba escrita primero (RED → GREEN) · `evidencias/m02-red.png`, `evidencias/m02-red-error.png`, `evidencias/m02-green.png` |
+| M4 | Leonardo | Benjamín | `buscarTarea` con `find()` + 3 pruebas · `evidencias/m04-verde.png` |
 | M5 | | | |
 | M6 | | | |
 | M7 | | | |
@@ -74,6 +73,9 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 | 4 | `agregarTarea` | Agrega una tarea | Normal | La nueva tarea queda al final |
 | 5 | `agregarTarea` | Tamaño del resultado | Normal | `length` del original + 1 |
 | 6 | `agregarTarea` | Inmutabilidad | Frontera | El original sigue con 1 elemento y el resultado es otro arreglo |
+| 7 | `buscarTarea` | Id existente (2) | Normal | Devuelve `{ id: 2, titulo: "Diseñar pruebas", completada: false }` |
+| 8 | `buscarTarea` | Id inexistente (99) | Error | `undefined` |
+| 9 | `buscarTarea` | Colección vacía | Frontera | `undefined` |
 
 ## Pruebas de integración manual
 
@@ -85,11 +87,18 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 - **Qué pertenece a la tarea y qué a la interfaz:** `id`, `titulo` y `completada` son datos de la tarea. La clase CSS `completada`, el texto del botón, el filtro seleccionado y el mensaje de error son de la interfaz, así que no van en el objeto.
 - **Pruebas que lo protegen:** los títulos y el orden del legacy se conservan; los ids son únicos y todas las tareas empiezan pendientes.
 
+
 ### 2. Agregar sin DOM y sin mutar (Misión 3)
 - **Antes:** `tareas.push(entrada.value.trim())` dentro del evento submit, seguido de `mostrarTareas()`.
 - **Después:** `agregarTarea(tareas, nuevaTarea)` devuelve `[...tareas, nuevaTarea]`.
 - **Por qué:** la función solo transforma datos; no lee el input ni dibuja nada, así que se prueba sin navegador.
 - **Pregunta del caso:** si `agregarTarea` modificara el arreglo recibido, la prueba "no modifica el arreglo original" lo detecta. Lo comprobamos con una versión que usaba `push`: fallaron 2 pruebas. También falló "un elemento más", porque `tareas.length` ya había crecido.
+
+### 3. Buscar por id con find() (Misión 4)
+- **Antes:** en el legacy la única forma de ubicar una tarea era su índice (`eliminar(i)`), y ese índice cambia al borrar otras tareas.
+- **Después:** `buscarTarea(tareas, id)` usa `tareas.find(t => t.id === id)`.
+- **Por qué find():** comunica "encontrar una". Se detiene en la primera coincidencia y devuelve el elemento o `undefined`; `filter()` devolvería un arreglo aunque solo hubiera una coincidencia.
+- **Casos frontera:** id inexistente y colección vacía devuelven `undefined`, sin lanzar error. Quien llame a la función debe contemplar ese caso.
 
 ## Extensión elegida (Misión 11)
 

@@ -21,8 +21,12 @@ export function agregarTarea(tareas, nuevaTarea) {
   return [...tareas, nuevaTarea];
 }
 
+// Misión 4 · find() expresa "encontrar una": devuelve la tarea o undefined.
+export function buscarTarea(tareas, id) {
+  return tareas.find(t => t.id === id);
+}
+
 // Pendientes:
-// Misión 4 · buscarTarea(tareas, id)             -> find()
 // Misión 5 · obtenerPendientes(tareas)            -> filter()
 //            obtenerTerminadas(tareas)            -> filter()
 // Misión 6 · cambiarEstado(tareas, id)            -> map() + spread
