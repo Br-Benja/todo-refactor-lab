@@ -23,6 +23,7 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | `src/taskService.js` | Modelo y reglas sobre tareas (se prueba con Vitest) |
 | `src/app.js` | Eventos, DOM y adaptación a la interfaz |
 | `tests/taskService.test.js` | Pruebas unitarias |
+| `evidencias/` | Capturas de cada misión (pruebas en verde/rojo y pruebas manuales) |
 
 ## Pair Programming
 | Misión | Driver | Navigator | Commit / evidencia |
@@ -39,7 +40,8 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | M8 | Leonardo | Benjamín | `obtenerResumen` reutilizando las funciones de la M5 + 4 pruebas · `evidencias/m08-verde.png` |
 | M9 | Benjamín | Leonardo | `app.js` como adaptador del DOM + 5 pruebas manuales · `evidencias/m09-1-alta-valida.png` … `evidencias/m09-6-inyeccion-corregida.png` |
 | M10 | Leonardo | Benjamín | Refactor: reglas de `app.js` al dominio + `actualizar()` + 8 pruebas · `evidencias/m10-verde.png`, `evidencias/m10-app-sin-cambios.png` |
-| M11 | Benjamín | Leonardo | Opción D: evitar títulos duplicados con `some()` + 8 pruebas (RED → GREEN) · `evidencias/m11-red.png`, `evidencias/m11-green.png`, `evidencias/m11-app-duplicado.png`, `evidencias/m11-app-reutilizar.jpeg` |
+| M11 | Benjamín | Leonardo | Opción D: evitar títulos duplicados con `some()` + 8 pruebas (RED → GREEN) · `evidencias/m11-red.png`, `evidencias/m11-green.png`, `evidencias/m11-app-duplicado.png`, `evidencias/m11-app-duplicado-terminada.jpeg`, `evidencias/m11-app-reutilizar.png` |
+| Final | Leonardo | Benjamín | README técnico, reflexión e historial · `evidencias/final-historial-commits.png` |
 
 ## Misión 0 · Análisis del código legacy
 **¿Dónde almacenarías ahora el estado completada de una tarea?**
@@ -122,11 +124,11 @@ La interfaz se abre con Live Server (los módulos no cargan con `file://`). Resu
 | 4 | Filtro | Elegir "Pendientes" | Solo se muestran pendientes | ✅ Como se esperaba | `evidencias/m09-4-filtro.png` |
 | 5 | Eliminar | Eliminar "Revisar requisitos" | Desaparece y se actualiza el resumen | ✅ Como se esperaba | `evidencias/m09-5-eliminar.png` |
 | 6 | Regresión de seguridad | Agregar `<b style="color:red">hola</b>` | Se muestra como texto (antes se interpretaba como HTML) | ✅ Como se esperaba | `evidencias/m09-6-inyeccion-corregida.png` |
+| 7 | Título duplicado | Escribir "  diseñar   PRUEBAS " y Agregar | No se agrega; mensaje "Ya existe una tarea con ese título." | ✅ Como se esperaba | `evidencias/m11-app-duplicado.png` |
+| 8 | Duplicado de una tarea terminada | Marcar "Diseñar pruebas" y escribir "Diseñar pruebas" | No se agrega: una tarea terminada sigue existiendo | ✅ Como se esperaba | `evidencias/m11-app-duplicado-terminada.jpeg` |
+| 9 | Reutilizar título | Eliminar "Diseñar pruebas" y volver a agregarlo | Se agrega al final | ✅ Como se esperaba | `evidencias/m11-app-reutilizar.png` |
 
 **Fallos encontrados** (formato: entrada → observado → esperado → corrección): ninguno.
-
-| 7 | Título duplicado | Escribir "  diseñar   PRUEBAS " y Agregar | No se agrega; mensaje "Ya existe una tarea con ese título." | ✅ Como se esperaba | `evidencias/m11-app-duplicado.png` |
-| 8 | Reutilizar título | Eliminar "Diseñar pruebas" y volver a agregarlo | Se agrega al final | ✅ Como se esperaba | `evidencias/m11-app-reutilizar.png` |
 
 ## Decisiones de refactor
 ### 1. De string a objeto (Misión 1)
@@ -207,6 +209,7 @@ Con las 25 pruebas en verde revisamos `app.js` y refactorizamos solo lo que pod�
 - Se ignoran espacios al inicio, al final y repetidos entre palabras.
 - No se distinguen mayúsculas de minúsculas.
 - Los acentos **sí** cuentan ("Disenar" ≠ "Diseñar"): son palabras distintas en español.
+- Una tarea **terminada** también cuenta: sigue en la lista, así que su título no se puede repetir. Solo al **eliminarla** el título queda libre.
 
 **Diseño**
 - `tituloComparable(texto)` construye la "clave" de comparación reutilizando `normalizarTitulo()` de la Misión 10.
@@ -227,4 +230,43 @@ Con las 25 pruebas en verde revisamos `app.js` y refactorizamos solo lo que pod�
 - **GREEN:** se implementó el mínimo código (`return { id, titulo, completada: false }`). Resultado: 3 passed. Evidencia: `evidencias/m02-green.png`.
 - **REFACTOR:** no hizo falta; la función ya es una sola línea clara.
 
+### Suite final
+`npm test` → **41 passed (41)**, 1 archivo de pruebas, sin pruebas omitidas ni pendientes (no se usa `.skip` ni `.todo`). Evidencia: `evidencias/m11-green.png`.
+
+### Pruebas que vimos fallar a propósito
+| Misión | Qué se hizo | Resultado | Evidencia |
+|---|---|---|---|
+| M2 | Prueba de `crearTarea` antes de implementarla | `1 failed` → `3 passed` | `evidencias/m02-red-error.png` |
+| M6 | `cambiarEstado` con `find` + asignación (muta) | `2 failed` | `evidencias/m06-mutacion-rojo.png` |
+| M7 | `eliminarTarea` con `findIndex` + `splice` (estilo legacy) | `2 failed` (borra la última con id inexistente) | `evidencias/m07-splice-rojo.jpeg` |
+| M11 | 8 pruebas de títulos duplicados antes de implementar | `8 failed` → `41 passed` | `evidencias/m11-red.png` |
+
+### Comportamientos del legacy conservados (Misión 0)
+| # | Comportamiento | Pruebas unitarias | Prueba manual |
+|---|---|---|---|
+| 1 | Al cargar: 3 tareas en orden y `Total: 3` | Casos 1–2 | Estado inicial visible en `evidencias/m09-2-alta-invalida.png` |
+| 2 | Un título válido se agrega al final, sin espacios, y el input se limpia | Casos 4–6, 26 | Escenario 1 |
+| 3 | Un título vacío o con solo espacios no se agrega y aparece el mensaje | Casos 27–28 | Escenario 2 |
+| 4 | Eliminar quita solo esa tarea | Casos 18–21 | Escenario 5 |
+| 5 | El total coincide con las tareas mostradas | Casos 22–25 | Escenarios 1–5 |
+
+### Historial de commits
+Commits por misión de ambos integrantes, con `Co-authored-by` del Navigator: `evidencias/final-historial-commits.png`.
+
+## Entregables
+| # | Entregable | Dónde está |
+|---|---|---|
+| 01 | Repositorio Git | Historial con un commit por misión de los dos integrantes (tabla Pair Programming) |
+| 02 | Aplicación refactorizada | `src/taskService.js` (dominio) + `src/app.js` (adaptador DOM); `index.html` carga `app.js` como módulo |
+| 03 | Suite de pruebas | `tests/taskService.test.js`: 41 pruebas AAA, `npm test` en verde |
+| 04 | README técnico | Este archivo: decisiones de refactor, roles, comandos, casos de prueba y extensión |
+| 05 | Evidencia | Carpeta `evidencias/` + registro de la prueba que falló (Misión 2) |
+| 06 | Reflexión de pareja | Sección siguiente |
+| 07 | Defensa individual | Presencial |
+
 ## Reflexión de pareja (200–250 palabras)
+El cambio que más aumentó la mantenibilidad fue separar las reglas del DOM. En legacy.js una sola función recorría los datos, armaba el HTML con innerHTML y calculaba el total; para revisar cualquier regla había que abrir el navegador y probar a mano. Al pasar a objetos con id y estado (Misión 1) y mover cada operación a taskService.js como funciones que reciben datos y devuelven datos nuevos, app.js quedó como un adaptador. La prueba de esa decisión llegó en la Misión 11: evitar títulos duplicados solo requirió una función nueva con some() y un if de cuatro líneas en app.js, sin tocar render() ni las demás funciones.
+
+La prueba que nos dio más confianza fue "con un id inexistente no elimina nada". Al diseñarla descubrimos que la versión estilo legacy (findIndex + splice) borra la última tarea cuando el id no existe, y que nuestra primera versión de la prueba no lo detectaba porque comparaba contra el mismo arreglo ya modificado. Aprendimos que una prueba en verde no basta: hay que saber qué comportamiento protege y verla fallar por la razón correcta, como hicimos con el ciclo RED → GREEN y con los experimentos de mutación.
+
+Trabajar como Driver y Navigator nos obligó a explicar cada cambio antes del commit. Los errores de Git y las evidencias mal nombradas también nos enseñaron a revisar con cuidado antes de entregar.

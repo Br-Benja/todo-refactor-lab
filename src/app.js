@@ -80,7 +80,7 @@ formulario.addEventListener("submit", evento => {
   evento.preventDefault();
 
   if (!esTituloValido(entrada.value)) {
-        mensaje.textContent = "Escribe un título para la tarea.";
+    mensaje.textContent = "Escribe un título para la tarea.";
     return;
   }
 
