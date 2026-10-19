@@ -37,7 +37,7 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | M6 | Leonardo | Benjamín | `cambiarEstado` con `map()` + spread + 4 pruebas · `evidencias/m06-verde.png`, `evidencias/m06-mutacion-rojo.png` |
 | M7 | Benjamín | Leonardo | `eliminarTarea` con `filter()` + 4 pruebas (casos frontera) · `evidencias/m07-verde.jpeg`, `evidencias/m07-splice-rojo.jpeg` |
 | M8 | Leonardo | Benjamín | `obtenerResumen` reutilizando las funciones de la M5 + 4 pruebas · `evidencias/m08-verde.png` |
-| M9 | | | |
+| M9 | Benjamín | Leonardo | `app.js` como adaptador del DOM + 5 pruebas manuales · `evidencias/m09-1-alta-valida.png` … `evidencias/m09-6-inyeccion-corregida.png` |
 | M10 | | | |
 | M11 | | | |
 
@@ -96,6 +96,19 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 
 ## Pruebas de integración manual
 
+La interfaz se abre con Live Server (los módulos no cargan con `file://`). Resultado observado en cada escenario:
+
+| # | Escenario | Acción | Resultado esperado | Resultado observado | Evidencia |
+|---|---|---|---|---|---|
+| 1 | Alta válida | Escribir "  Estudiar Vitest  " y Agregar | Nueva tarea pendiente al final, sin espacios; cambia el resumen | ✅ Como se esperaba | `evidencias/m09-1-alta-valida.png` |
+| 2 | Alta inválida | Enviar título con solo espacios | No se agrega; mensaje "Escribe un título para la tarea." | ✅ Como se esperaba | `evidencias/m09-2-alta-invalida.png` |
+| 3 | Cambio de estado | Marcar "Diseñar pruebas" | Se tacha; Pendientes −1, Terminadas +1 | ✅ Como se esperaba | `evidencias/m09-3-cambio-estado.png` |
+| 4 | Filtro | Elegir "Pendientes" | Solo se muestran pendientes | ✅ Como se esperaba | `evidencias/m09-4-filtro.png` |
+| 5 | Eliminar | Eliminar "Revisar requisitos" | Desaparece y se actualiza el resumen | ✅ Como se esperaba | `evidencias/m09-5-eliminar.png` |
+| 6 | Regresión de seguridad | Agregar `<b style="color:red">hola</b>` | Se muestra como texto (antes se interpretaba como HTML) | ✅ Como se esperaba | `evidencias/m09-6-inyeccion-corregida.png` |
+
+**Fallos encontrados** (formato: entrada → observado → esperado → corrección): ninguno.
+
 ## Decisiones de refactor
 ### 1. De string a objeto (Misión 1)
 - **Antes:** `"Diseñar pruebas"`. La identidad era el índice y no había dónde guardar si estaba terminada.
@@ -143,6 +156,14 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 - **Después:** `obtenerResumen(tareas)` devuelve `{ total, pendientes, terminadas }` reutilizando `obtenerPendientes` y `obtenerTerminadas`.
 - **Comparación:** calcular directo (un solo recorrido con `reduce`) hace menos trabajo, pero repite la condición `completada`. Reutilizar comunica mejor la intención, no duplica reglas y, si la regla cambia, se modifica en un solo lugar. Con pocas tareas, recorrer el arreglo 2 veces no se nota.
 - **Pruebas:** además del ejemplo del caso, una prueba de composición (`cambiarEstado` → `eliminarTarea` → resumen) y una invariante (`pendientes + terminadas === total`).
+
+### 8. app.js como adaptador (Misión 9)
+- **Antes:** `legacy.js` mezclaba datos, reglas y DOM; usaba `innerHTML` con texto del usuario y `onclick="eliminar(i)"` global.
+- **Después:** `app.js` tiene 4 zonas: referencias al DOM, estado, `render()` y eventos. Cada evento llama a una función de `taskService.js`, guarda el nuevo estado (`tareas = ...`) y llama a `render()`.
+- **Seguridad:** `render()` usa `createElement` + `textContent`, así que el título nunca se interpreta como HTML (se corrigió el problema detectado en la Misión 0).
+- **Sin globales:** cada botón recibe su evento con `addEventListener` y conoce el `id` de su tarea, no un índice.
+- **Lo que no se prueba con Vitest:** el DOM se verificó con las pruebas manuales; las reglas ya estaban cubiertas por las 25 pruebas unitarias.
+- **Pendiente para la Misión 10:** en `app.js` quedaron dos reglas: validar o recortar el título y calcular el siguiente id.
 
 ## Extensión elegida (Misión 11)
 
