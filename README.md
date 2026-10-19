@@ -39,7 +39,7 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | M8 | Leonardo | Benjamín | `obtenerResumen` reutilizando las funciones de la M5 + 4 pruebas · `evidencias/m08-verde.png` |
 | M9 | Benjamín | Leonardo | `app.js` como adaptador del DOM + 5 pruebas manuales · `evidencias/m09-1-alta-valida.png` … `evidencias/m09-6-inyeccion-corregida.png` |
 | M10 | Leonardo | Benjamín | Refactor: reglas de `app.js` al dominio + `actualizar()` + 8 pruebas · `evidencias/m10-verde.png`, `evidencias/m10-app-sin-cambios.png` |
-| M11 | | | |
+| M11 | Benjamín | Leonardo | Opción D: evitar títulos duplicados con `some()` + 8 pruebas (RED → GREEN) · `evidencias/m11-red.png`, `evidencias/m11-green.png`, `evidencias/m11-app-duplicado.png`, `evidencias/m11-app-reutilizar.jpeg` |
 
 ## Misión 0 · Análisis del código legacy
 **¿Dónde almacenarías ahora el estado completada de una tarea?**
@@ -101,6 +101,14 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 | 31 | `filtrarTareas` | `"pendientes"` | Normal | Ids `[1, 3]` |
 | 32 | `filtrarTareas` | `"terminadas"` | Normal | Ids `[2]` |
 | 33 | `filtrarTareas` | `"todas"` | Normal | La colección completa |
+| 34 | `tituloComparable` | `"  Diseñar   PRUEBAS "` | Normal | `"diseñar pruebas"` |
+| 35 | `existeTitulo` | `"Diseñar pruebas"` (exacto) | Normal | `true` |
+| 36 | `existeTitulo` | `"diseñar PRUEBAS"` | Normal | `true` |
+| 37 | `existeTitulo` | `"   Diseñar    pruebas  "` | Frontera | `true` |
+| 38 | `existeTitulo` | `"Estudiar Vitest"` | Normal | `false` |
+| 39 | `existeTitulo` | `"Disenar pruebas"` (sin ñ) | Frontera | `false` (los acentos cuentan) |
+| 40 | `existeTitulo` | Colección vacía | Frontera | `false` |
+| 41 | `existeTitulo` | Después de eliminar la tarea 2 | Normal | `false` (el título se puede reutilizar) |
 
 ## Pruebas de integración manual
 
@@ -116,6 +124,9 @@ La interfaz se abre con Live Server (los módulos no cargan con `file://`). Resu
 | 6 | Regresión de seguridad | Agregar `<b style="color:red">hola</b>` | Se muestra como texto (antes se interpretaba como HTML) | ✅ Como se esperaba | `evidencias/m09-6-inyeccion-corregida.png` |
 
 **Fallos encontrados** (formato: entrada → observado → esperado → corrección): ninguno.
+
+| 7 | Título duplicado | Escribir "  diseñar   PRUEBAS " y Agregar | No se agrega; mensaje "Ya existe una tarea con ese título." | ✅ Como se esperaba | `evidencias/m11-app-duplicado.png` |
+| 8 | Reutilizar título | Eliminar "Diseñar pruebas" y volver a agregarlo | Se agrega al final | ✅ Como se esperaba | `evidencias/m11-app-reutilizar.png` |
 
 ## Decisiones de refactor
 ### 1. De string a objeto (Misión 1)
@@ -189,6 +200,24 @@ Con las 25 pruebas en verde revisamos `app.js` y refactorizamos solo lo que pod�
 - **Resultado:** `app.js` ya no contiene ninguna condición de negocio; solo DOM, eventos y `actualizar()`.
 
 ## Extensión elegida (Misión 11)
+
+**Opción D · Evitar títulos duplicados.**
+
+**¿Qué significa "duplicado"?** Decidimos que es *normalizado*, no exacto:
+- Se ignoran espacios al inicio, al final y repetidos entre palabras.
+- No se distinguen mayúsculas de minúsculas.
+- Los acentos **sí** cuentan ("Disenar" ≠ "Diseñar"): son palabras distintas en español.
+
+**Diseño**
+- `tituloComparable(texto)` construye la "clave" de comparación reutilizando `normalizarTitulo()` de la Misión 10.
+- `existeTitulo(tareas, titulo)` usa `some()`, porque la pregunta es "¿existe alguna?" y la respuesta es `true`/`false`. `find()` devolvería la tarea y `filter()` un arreglo.
+- La regla vive en `taskService.js`; `app.js` solo decide qué mensaje mostrar.
+
+**Pruebas primero:** se escribieron 8 pruebas antes de implementar. ROJO: `8 failed | 33 passed`, con `(0 , existeTitulo) is not a function` (`evidencias/m11-red.png`). VERDE: `41 passed` (`evidencias/m11-green.png`).
+
+**¿El refactor facilitó el cambio?** Sí. En `app.js` solo se agregaron un import y un `if` de 4 líneas; no se tocaron `render()`, los eventos de la lista ni las demás funciones. Gracias a la Misión 10, la validación ya estaba en el dominio y la nueva regla se puso junto a `esTituloValido()`. Todas las pruebas anteriores siguieron en verde, así que no se rompió nada existente.
+
+**Alternativa descartada:** que `agregarTarea` rechazara duplicados por sí misma. La descartamos porque tendría que lanzar un error o devolver el arreglo sin cambios, y la interfaz no sabría qué mensaje mostrar. Una función que pregunta (`existeTitulo`) mantiene `agregarTarea` simple y sigue el mismo patrón que `esTituloValido`.
 
 ## Evidencia
 ### Registro de una prueba que inicialmente falló (Misión 2)

@@ -12,7 +12,9 @@ import {
   normalizarTitulo,
   esTituloValido,
   siguienteId,
-  filtrarTareas
+  filtrarTareas,
+  tituloComparable,
+  existeTitulo
 } from "../src/taskService.js";
 
 // Las pruebas de cada misión se agregan en este archivo.
@@ -444,5 +446,97 @@ describe("Misión 10 · reglas que estaban en app.js", () => {
 
     // Assert
     expect(visibles).toEqual(tareas);
+  });
+});
+
+
+describe("Misión 11 · evitar títulos duplicados (opción D)", () => {
+  // "Duplicado" = mismo título normalizado: sin espacios sobrantes y sin distinguir mayúsculas.
+  it("tituloComparable recorta, une espacios internos y pasa a minúsculas", () => {
+    // Arrange
+    const texto = "  Diseñar   PRUEBAS ";
+
+    // Act
+    const clave = tituloComparable(texto);
+
+    // Assert
+    expect(clave).toBe("diseñar pruebas");
+  });
+
+  it("detecta un título exactamente igual", () => {
+    // Arrange
+    const tareas = tareasIniciales;
+
+    // Act
+    const existe = existeTitulo(tareas, "Diseñar pruebas");
+
+    // Assert
+    expect(existe).toBe(true);
+  });
+
+  it("detecta un duplicado aunque cambien mayúsculas y minúsculas", () => {
+    // Arrange
+    const tareas = tareasIniciales;
+
+    // Act
+    const existe = existeTitulo(tareas, "diseñar PRUEBAS");
+
+    // Assert
+    expect(existe).toBe(true);
+  });
+
+  it("detecta un duplicado aunque tenga espacios de más", () => {
+    // Arrange
+    const tareas = tareasIniciales;
+
+    // Act
+    const existe = existeTitulo(tareas, "   Diseñar    pruebas  ");
+
+    // Assert
+    expect(existe).toBe(true);
+  });
+
+  it("un título distinto no es duplicado", () => {
+    // Arrange
+    const tareas = tareasIniciales;
+
+    // Act
+    const existe = existeTitulo(tareas, "Estudiar Vitest");
+
+    // Assert
+    expect(existe).toBe(false);
+  });
+
+  it("los acentos sí cuentan: 'Disenar' no es 'Diseñar'", () => {
+    // Arrange
+    const tareas = tareasIniciales;
+
+    // Act
+    const existe = existeTitulo(tareas, "Disenar pruebas");
+
+    // Assert
+    expect(existe).toBe(false);
+  });
+
+  it("en una colección vacía nada es duplicado", () => {
+    // Arrange
+    const tareas = [];
+
+    // Act
+    const existe = existeTitulo(tareas, "Diseñar pruebas");
+
+    // Assert
+    expect(existe).toBe(false);
+  });
+
+  it("después de eliminar una tarea su título se puede volver a usar", () => {
+    // Arrange
+    const tareas = eliminarTarea(tareasIniciales, 2);
+
+    // Act
+    const existe = existeTitulo(tareas, "Diseñar pruebas");
+
+    // Assert
+    expect(existe).toBe(false);
   });
 });

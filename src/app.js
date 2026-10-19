@@ -14,7 +14,8 @@ import {
   normalizarTitulo,
   esTituloValido,
   siguienteId,
-  filtrarTareas
+  filtrarTareas,
+  existeTitulo
 } from "./taskService.js";
 
 // 1. Referencias al DOM
@@ -79,7 +80,12 @@ formulario.addEventListener("submit", evento => {
   evento.preventDefault();
 
   if (!esTituloValido(entrada.value)) {
-    mensaje.textContent = "Escribe un título para la tarea.";
+        mensaje.textContent = "Escribe un título para la tarea.";
+    return;
+  }
+
+  if (existeTitulo(tareas, entrada.value)) {
+    mensaje.textContent = "Ya existe una tarea con ese título.";
     return;
   }
 

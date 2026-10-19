@@ -78,3 +78,16 @@ export function filtrarTareas(tareas, filtro) {
   if (filtro === "terminadas") return obtenerTerminadas(tareas);
   return tareas;
 }
+
+
+// Misión 11 · Opción D: evitar títulos duplicados.
+// Dos títulos son el mismo si coinciden sin espacios sobrantes y sin distinguir mayúsculas.
+export function tituloComparable(texto) {
+  return normalizarTitulo(texto).replace(/\s+/g, " ").toLowerCase();
+}
+
+// some() responde "¿existe alguna?" con true/false.
+export function existeTitulo(tareas, titulo) {
+  const clave = tituloComparable(titulo);
+  return tareas.some(t => tituloComparable(t.titulo) === clave);
+}
