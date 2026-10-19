@@ -8,7 +8,11 @@ import {
   obtenerTerminadas,
   cambiarEstado,
   eliminarTarea,
-  obtenerResumen
+  obtenerResumen,
+  normalizarTitulo,
+  esTituloValido,
+  siguienteId,
+  filtrarTareas
 } from "../src/taskService.js";
 
 // Las pruebas de cada misión se agregan en este archivo.
@@ -348,5 +352,97 @@ describe("Misión 8 · obtenerResumen", () => {
 
     // Assert
     expect(pendientes + terminadas).toBe(total);
+  });
+});
+
+
+describe("Misión 10 · reglas que estaban en app.js", () => {
+  it("normalizarTitulo quita los espacios al inicio y al final", () => {
+    // Arrange
+    const texto = "   Estudiar Vitest  ";
+
+    // Act
+    const titulo = normalizarTitulo(texto);
+
+    // Assert
+    expect(titulo).toBe("Estudiar Vitest");
+  });
+
+  it("esTituloValido acepta un título con texto", () => {
+    // Arrange
+    const texto = "Estudiar Vitest";
+
+    // Act
+    const valido = esTituloValido(texto);
+
+    // Assert
+    expect(valido).toBe(true);
+  });
+
+  it("esTituloValido rechaza un título vacío o con solo espacios", () => {
+    // Arrange
+    const vacio = "";
+    const espacios = "    ";
+
+    // Act
+    const resultados = [esTituloValido(vacio), esTituloValido(espacios)];
+
+    // Assert
+    expect(resultados).toEqual([false, false]);
+  });
+
+  it("siguienteId devuelve el id mayor + 1 aunque los ids no sean consecutivos", () => {
+    // Arrange
+    const tareas = [crearTarea(1, "A"), crearTarea(5, "B"), crearTarea(3, "C")];
+
+    // Act
+    const id = siguienteId(tareas);
+
+    // Assert
+    expect(id).toBe(6);
+  });
+
+  it("siguienteId con una colección vacía devuelve 1", () => {
+    // Arrange
+    const tareas = [];
+
+    // Act
+    const id = siguienteId(tareas);
+
+    // Assert
+    expect(id).toBe(1);
+  });
+
+  it("filtrarTareas con 'pendientes' devuelve solo las pendientes", () => {
+    // Arrange
+    const tareas = cambiarEstado(tareasIniciales, 2);
+
+    // Act
+    const visibles = filtrarTareas(tareas, "pendientes");
+
+    // Assert
+    expect(visibles.map(t => t.id)).toEqual([1, 3]);
+  });
+
+  it("filtrarTareas con 'terminadas' devuelve solo las terminadas", () => {
+    // Arrange
+    const tareas = cambiarEstado(tareasIniciales, 2);
+
+    // Act
+    const visibles = filtrarTareas(tareas, "terminadas");
+
+    // Assert
+    expect(visibles.map(t => t.id)).toEqual([2]);
+  });
+
+  it("filtrarTareas con 'todas' devuelve la colección completa", () => {
+    // Arrange
+    const tareas = cambiarEstado(tareasIniciales, 2);
+
+    // Act
+    const visibles = filtrarTareas(tareas, "todas");
+
+    // Assert
+    expect(visibles).toEqual(tareas);
   });
 });

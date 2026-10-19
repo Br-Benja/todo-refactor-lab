@@ -38,7 +38,7 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | M7 | Benjamín | Leonardo | `eliminarTarea` con `filter()` + 4 pruebas (casos frontera) · `evidencias/m07-verde.jpeg`, `evidencias/m07-splice-rojo.jpeg` |
 | M8 | Leonardo | Benjamín | `obtenerResumen` reutilizando las funciones de la M5 + 4 pruebas · `evidencias/m08-verde.png` |
 | M9 | Benjamín | Leonardo | `app.js` como adaptador del DOM + 5 pruebas manuales · `evidencias/m09-1-alta-valida.png` … `evidencias/m09-6-inyeccion-corregida.png` |
-| M10 | | | |
+| M10 | Leonardo | Benjamín | Refactor: reglas de `app.js` al dominio + `actualizar()` + 8 pruebas · `evidencias/m10-verde.png`, `evidencias/m10-app-sin-cambios.png` |
 | M11 | | | |
 
 ## Misión 0 · Análisis del código legacy
@@ -93,6 +93,14 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 | 23 | `obtenerResumen` | Colección vacía | Frontera | `{ total: 0, pendientes: 0, terminadas: 0 }` |
 | 24 | `obtenerResumen` | Compuesto con `cambiarEstado` y `eliminarTarea` | Normal | `{3, 2, 1}` y luego `{2, 2, 0}` |
 | 25 | `obtenerResumen` | Invariante | Frontera | `pendientes + terminadas === total` |
+| 26 | `normalizarTitulo` | `"   Estudiar Vitest  "` | Normal | `"Estudiar Vitest"` |
+| 27 | `esTituloValido` | `"Estudiar Vitest"` | Normal | `true` |
+| 28 | `esTituloValido` | `""` y `"    "` | Error | `false` en ambos |
+| 29 | `siguienteId` | Ids `[1, 5, 3]` | Normal | `6` |
+| 30 | `siguienteId` | Colección vacía | Frontera | `1` (sin `-Infinity`) |
+| 31 | `filtrarTareas` | `"pendientes"` | Normal | Ids `[1, 3]` |
+| 32 | `filtrarTareas` | `"terminadas"` | Normal | Ids `[2]` |
+| 33 | `filtrarTareas` | `"todas"` | Normal | La colección completa |
 
 ## Pruebas de integración manual
 
@@ -164,6 +172,21 @@ La interfaz se abre con Live Server (los módulos no cargan con `file://`). Resu
 - **Sin globales:** cada botón recibe su evento con `addEventListener` y conoce el `id` de su tarea, no un índice.
 - **Lo que no se prueba con Vitest:** el DOM se verificó con las pruebas manuales; las reglas ya estaban cubiertas por las 25 pruebas unitarias.
 - **Pendiente para la Misión 10:** en `app.js` quedaron dos reglas: validar o recortar el título y calcular el siguiente id.
+
+### 9. Refactor final protegido por pruebas (Misión 10)
+Con las 25 pruebas en verde revisamos `app.js` y refactorizamos solo lo que podíamos justificar:
+
+| Problema | Criterio del caso | Cambio |
+|---|---|---|
+| `entrada.value.trim() === ""` en el evento | Dependencia entre DOM y reglas | `esTituloValido()` / `normalizarTitulo()` en `taskService.js` |
+| `let siguienteId` + `siguienteId++` | Regla y estado mezclados con la interfaz | `siguienteId(tareas)` calcula el id desde los datos |
+| `tareasVisibles()` decidía con `if` sobre `filtro.value` | Más de una responsabilidad | `filtrarTareas(tareas, filtro)` en el dominio |
+| `tareas = ...; render();` repetido 3 veces | Código duplicado | `actualizar(nuevasTareas)`: único punto donde cambia el estado |
+
+- **Proceso:** primero agregamos las funciones con 8 pruebas (33 en verde) sin tocar `app.js`; después cambiamos `app.js` y volvimos a correr las pruebas y los 6 escenarios manuales. El comportamiento es el mismo.
+- **Caso frontera:** `Math.max()` de un arreglo vacío da `-Infinity`; por eso `siguienteId` usa `Math.max(0, ...ids)` y devuelve 1.
+- **Efecto conocido:** si se elimina la tarea con el id mayor, la siguiente alta reutiliza ese id. Sigue siendo único dentro de la colección, que es lo que necesitan `buscarTarea`, `cambiarEstado` y `eliminarTarea`.
+- **Resultado:** `app.js` ya no contiene ninguna condición de negocio; solo DOM, eventos y `actualizar()`.
 
 ## Extensión elegida (Misión 11)
 

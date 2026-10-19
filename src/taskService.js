@@ -58,3 +58,23 @@ export function obtenerResumen(tareas) {
     terminadas: obtenerTerminadas(tareas).length
   };
 }
+
+
+// Misión 10 · Reglas que estaban en app.js, ahora probadas.
+export function normalizarTitulo(texto) {
+  return texto.trim();
+}
+
+export function esTituloValido(texto) {
+  return normalizarTitulo(texto) !== "";
+}
+
+export function siguienteId(tareas) {
+  return Math.max(0, ...tareas.map(t => t.id)) + 1;
+}
+
+export function filtrarTareas(tareas, filtro) {
+  if (filtro === "pendientes") return obtenerPendientes(tareas);
+  if (filtro === "terminadas") return obtenerTerminadas(tareas);
+  return tareas;
+}

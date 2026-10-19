@@ -8,11 +8,13 @@ import {
   tareasIniciales,
   crearTarea,
   agregarTarea,
-  obtenerPendientes,
-  obtenerTerminadas,
   cambiarEstado,
   eliminarTarea,
-  obtenerResumen
+  obtenerResumen,
+  normalizarTitulo,
+  esTituloValido,
+  siguienteId,
+  filtrarTareas
 } from "./taskService.js";
 
 // 1. Referencias al DOM
@@ -25,15 +27,14 @@ const resumen = document.querySelector("#resumen");
 
 // 2. Estado de la aplicación
 let tareas = tareasIniciales;
-let siguienteId = Math.max(...tareas.map(t => t.id)) + 1;
 
-// 3. render(): dibuja el estado actual; no modifica datos
-function tareasVisibles() {
-  if (filtro.value === "pendientes") return obtenerPendientes(tareas);
-  if (filtro.value === "terminadas") return obtenerTerminadas(tareas);
-  return tareas;
+// Único punto donde cambia el estado: guarda la nueva colección y redibuja.
+function actualizar(nuevasTareas) {
+  tareas = nuevasTareas;
+  render();
 }
 
+// 3. render(): dibuja el estado actual; no modifica datos
 function crearElementoTarea(tarea) {
   const li = document.createElement("li");
   li.className = tarea.completada ? "tarea completada" : "tarea";
@@ -42,10 +43,7 @@ function crearElementoTarea(tarea) {
   casilla.type = "checkbox";
   casilla.checked = tarea.completada;
   casilla.setAttribute("aria-label", "Marcar como terminada");
-  casilla.addEventListener("change", () => {
-    tareas = cambiarEstado(tareas, tarea.id);
-    render();
-  });
+  casilla.addEventListener("change", () => actualizar(cambiarEstado(tareas, tarea.id)));
 
   const titulo = document.createElement("span");
   titulo.className = "titulo";
@@ -55,17 +53,14 @@ function crearElementoTarea(tarea) {
   botonEliminar.type = "button";
   botonEliminar.className = "eliminar";
   botonEliminar.textContent = "Eliminar";
-  botonEliminar.addEventListener("click", () => {
-    tareas = eliminarTarea(tareas, tarea.id);
-    render();
-  });
+  botonEliminar.addEventListener("click", () => actualizar(eliminarTarea(tareas, tarea.id)));
 
   li.append(casilla, titulo, botonEliminar);
   return li;
 }
 
 function render() {
-  const visibles = tareasVisibles();
+  const visibles = filtrarTareas(tareas, filtro.value);
   lista.replaceChildren(...visibles.map(crearElementoTarea));
 
   if (visibles.length === 0) {
@@ -82,18 +77,16 @@ function render() {
 // 4. Eventos
 formulario.addEventListener("submit", evento => {
   evento.preventDefault();
-  const titulo = entrada.value.trim();
 
-  if (titulo === "") {
+  if (!esTituloValido(entrada.value)) {
     mensaje.textContent = "Escribe un título para la tarea.";
     return;
   }
 
-  tareas = agregarTarea(tareas, crearTarea(siguienteId, titulo));
-  siguienteId++;
+  const nueva = crearTarea(siguienteId(tareas), normalizarTitulo(entrada.value));
   entrada.value = "";
   mensaje.textContent = "";
-  render();
+  actualizar(agregarTarea(tareas, nueva));
 });
 
 filtro.addEventListener("change", render);
