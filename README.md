@@ -36,7 +36,7 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | M5 | Benjamín | Leonardo | `obtenerPendientes` / `obtenerTerminadas` con `filter()` + 4 pruebas · `evidencias/m05-verde.jpeg` |
 | M6 | Leonardo | Benjamín | `cambiarEstado` con `map()` + spread + 4 pruebas · `evidencias/m06-verde.png`, `evidencias/m06-mutacion-rojo.png` |
 | M7 | Benjamín | Leonardo | `eliminarTarea` con `filter()` + 4 pruebas (casos frontera) · `evidencias/m07-verde.jpeg`, `evidencias/m07-splice-rojo.jpeg` |
-| M8 | | | |
+| M8 | Leonardo | Benjamín | `obtenerResumen` reutilizando las funciones de la M5 + 4 pruebas · `evidencias/m08-verde.png` |
 | M9 | | | |
 | M10 | | | |
 | M11 | | | |
@@ -89,6 +89,10 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 | 19 | `eliminarTarea` | Id inexistente (99) | Error | Quedan ids `[1, 2]` (no borra nada) |
 | 20 | `eliminarTarea` | Colección vacía | Frontera | `[]` |
 | 21 | `eliminarTarea` | Inmutabilidad | Frontera | El original conserva ids `[1, 2]` |
+| 22 | `obtenerResumen` | 5 tareas (2 terminadas) | Normal | `{ total: 5, pendientes: 3, terminadas: 2 }` |
+| 23 | `obtenerResumen` | Colección vacía | Frontera | `{ total: 0, pendientes: 0, terminadas: 0 }` |
+| 24 | `obtenerResumen` | Compuesto con `cambiarEstado` y `eliminarTarea` | Normal | `{3, 2, 1}` y luego `{2, 2, 0}` |
+| 25 | `obtenerResumen` | Invariante | Frontera | `pendientes + terminadas === total` |
 
 ## Pruebas de integración manual
 
@@ -132,7 +136,13 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 - **Después:** `eliminarTarea(tareas, id)` devuelve `tareas.filter(t => t.id !== id)`.
 - **Por qué filter():** eliminar es "conservar todas excepto una". `map()` no puede quitar elementos y `find()` solo localiza uno.
 - **Caso frontera descubierto:** con `findIndex` + `splice`, un id inexistente da `-1` y `splice(-1, 1)` borra la **última** tarea. La prueba "id inexistente" compara contra valores fijos (`[1, 2]`), porque comparar contra el arreglo original no sirve si ese original también fue modificado.
-- **Evidencia:** la variante con `splice` falla 2 pruebas (`evidencias/m07-splice-rojo.png`).
+- **Evidencia:** la variante con `splice` falla 2 pruebas (`evidencias/m07-splice-rojo.jpeg`).
+
+### 7. Resumen por composición (Misión 8)
+- **Antes:** `mostrarTareas()` calculaba `"Total: " + tareas.length` mientras dibujaba la lista; solo existía el total.
+- **Después:** `obtenerResumen(tareas)` devuelve `{ total, pendientes, terminadas }` reutilizando `obtenerPendientes` y `obtenerTerminadas`.
+- **Comparación:** calcular directo (un solo recorrido con `reduce`) hace menos trabajo, pero repite la condición `completada`. Reutilizar comunica mejor la intención, no duplica reglas y, si la regla cambia, se modifica en un solo lugar. Con pocas tareas, recorrer el arreglo 2 veces no se nota.
+- **Pruebas:** además del ejemplo del caso, una prueba de composición (`cambiarEstado` → `eliminarTarea` → resumen) y una invariante (`pendientes + terminadas === total`).
 
 ## Extensión elegida (Misión 11)
 

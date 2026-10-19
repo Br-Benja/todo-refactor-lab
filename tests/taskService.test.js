@@ -7,7 +7,8 @@ import {
   obtenerPendientes,
   obtenerTerminadas,
   cambiarEstado,
-  eliminarTarea
+  eliminarTarea,
+  obtenerResumen
 } from "../src/taskService.js";
 
 // Las pruebas de cada misión se agregan en este archivo.
@@ -292,5 +293,60 @@ describe("Misión 7 · eliminarTarea", () => {
 
     // Assert
     expect(tareas.map(t => t.id)).toEqual([1, 2]);
+  });
+});
+
+
+describe("Misión 8 · obtenerResumen", () => {
+  it("cuenta total, pendientes y terminadas (ejemplo del caso)", () => {
+    // Arrange
+    const tareas = [
+      { id: 1, titulo: "A", completada: true },
+      { id: 2, titulo: "B", completada: false },
+      { id: 3, titulo: "C", completada: true },
+      { id: 4, titulo: "D", completada: false },
+      { id: 5, titulo: "E", completada: false }
+    ];
+
+    // Act
+    const resumen = obtenerResumen(tareas);
+
+    // Assert
+    expect(resumen).toEqual({ total: 5, pendientes: 3, terminadas: 2 });
+  });
+
+  it("con una colección vacía todo vale 0", () => {
+    // Arrange
+    const tareas = [];
+
+    // Act
+    const resumen = obtenerResumen(tareas);
+
+    // Assert
+    expect(resumen).toEqual({ total: 0, pendientes: 0, terminadas: 0 });
+  });
+
+  it("se actualiza al componerse con cambiarEstado y eliminarTarea", () => {
+    // Arrange
+    const tareas = cambiarEstado(tareasIniciales, 1);
+
+    // Act
+    const despuesDeCambiar = obtenerResumen(tareas);
+    const despuesDeEliminar = obtenerResumen(eliminarTarea(tareas, 1));
+
+    // Assert
+    expect(despuesDeCambiar).toEqual({ total: 3, pendientes: 2, terminadas: 1 });
+    expect(despuesDeEliminar).toEqual({ total: 2, pendientes: 2, terminadas: 0 });
+  });
+
+  it("pendientes + terminadas siempre es igual al total", () => {
+    // Arrange
+    const tareas = cambiarEstado(cambiarEstado(tareasIniciales, 1), 3);
+
+    // Act
+    const { total, pendientes, terminadas } = obtenerResumen(tareas);
+
+    // Assert
+    expect(pendientes + terminadas).toBe(total);
   });
 });

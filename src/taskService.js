@@ -50,5 +50,11 @@ export function eliminarTarea(tareas, id) {
   return tareas.filter(t => t.id !== id);
 }
 
-// Pendientes:
-// Misión 8 · obtenerResumen(tareas)
+// Misión 8 · Reutiliza las reglas ya probadas de la Misión 5.
+export function obtenerResumen(tareas) {
+  return {
+    total: tareas.length,
+    pendientes: obtenerPendientes(tareas).length,
+    terminadas: obtenerTerminadas(tareas).length
+  };
+}
