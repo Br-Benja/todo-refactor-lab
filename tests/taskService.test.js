@@ -6,7 +6,8 @@ import {
   buscarTarea,
   obtenerPendientes,
   obtenerTerminadas,
-  cambiarEstado
+  cambiarEstado,
+  eliminarTarea
 } from "../src/taskService.js";
 
 // Las pruebas de cada misión se agregan en este archivo.
@@ -240,5 +241,56 @@ describe("Misión 6 · cambiarEstado", () => {
     // Assert
     expect(original.completada).toBe(false);
     expect(resultado[0]).not.toBe(original);
+  });
+});
+
+
+describe("Misión 7 · eliminarTarea", () => {
+  it("elimina solo la tarea con el id indicado", () => {
+    // Arrange
+    const tareas = [
+      crearTarea(1, "Revisar requisitos"),
+      crearTarea(2, "Diseñar pruebas"),
+      crearTarea(3, "Refactorizar código")
+    ];
+
+    // Act
+    const resultado = eliminarTarea(tareas, 2);
+
+    // Assert
+    expect(resultado.map(t => t.id)).toEqual([1, 3]);
+  });
+
+  it("con un id inexistente no elimina nada", () => {
+    // Arrange
+    const tareas = [crearTarea(1, "Revisar requisitos"), crearTarea(2, "Diseñar pruebas")];
+
+    // Act
+    const resultado = eliminarTarea(tareas, 99);
+
+    // Assert
+    expect(resultado.map(t => t.id)).toEqual([1, 2]);
+  });
+
+  it("con una colección vacía devuelve un arreglo vacío", () => {
+    // Arrange
+    const tareas = [];
+
+    // Act
+    const resultado = eliminarTarea(tareas, 1);
+
+    // Assert
+    expect(resultado).toEqual([]);
+  });
+
+  it("no modifica el arreglo original", () => {
+    // Arrange
+    const tareas = [crearTarea(1, "Revisar requisitos"), crearTarea(2, "Diseñar pruebas")];
+
+    // Act
+    eliminarTarea(tareas, 1);
+
+    // Assert
+    expect(tareas.map(t => t.id)).toEqual([1, 2]);
   });
 });

@@ -45,6 +45,10 @@ export function cambiarEstado(tareas, id) {
   );
 }
 
+// Misión 7 · Eliminar = "conservar todas excepto la del id" -> filter().
+export function eliminarTarea(tareas, id) {
+  return tareas.filter(t => t.id !== id);
+}
+
 // Pendientes:
-// Misión 7 · eliminarTarea(tareas, id)            -> filter()
 // Misión 8 · obtenerResumen(tareas)

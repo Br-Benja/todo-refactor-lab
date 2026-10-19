@@ -35,7 +35,7 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | M4 | Leonardo | Benjamín | `buscarTarea` con `find()` + 3 pruebas · `evidencias/m04-verde.png` |
 | M5 | Benjamín | Leonardo | `obtenerPendientes` / `obtenerTerminadas` con `filter()` + 4 pruebas · `evidencias/m05-verde.jpeg` |
 | M6 | Leonardo | Benjamín | `cambiarEstado` con `map()` + spread + 4 pruebas · `evidencias/m06-verde.png`, `evidencias/m06-mutacion-rojo.png` |
-| M7 | | | |
+| M7 | Benjamín | Leonardo | `eliminarTarea` con `filter()` + 4 pruebas (casos frontera) · `evidencias/m07-verde.jpeg`, `evidencias/m07-splice-rojo.jpeg` |
 | M8 | | | |
 | M9 | | | |
 | M10 | | | |
@@ -85,6 +85,11 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 | 15 | `cambiarEstado` | Las demás tareas | Normal | La tarea 1 queda igual |
 | 16 | `cambiarEstado` | Id inexistente (99) | Error | El resultado es igual al original |
 | 17 | `cambiarEstado` | Inmutabilidad | Frontera | El objeto original sigue en `false` y el resultado es otro objeto |
+| 18 | `eliminarTarea` | Eliminar id 2 de [1, 2, 3] | Normal | Quedan ids `[1, 3]` |
+| 19 | `eliminarTarea` | Id inexistente (99) | Error | Quedan ids `[1, 2]` (no borra nada) |
+| 20 | `eliminarTarea` | Colección vacía | Frontera | `[]` |
+| 21 | `eliminarTarea` | Inmutabilidad | Frontera | El original conserva ids `[1, 2]` |
+
 ## Pruebas de integración manual
 
 ## Decisiones de refactor
@@ -121,6 +126,13 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 - **Por qué map():** la operación transforma la colección y devuelve otra del mismo tamaño. `forEach()` no devuelve nada y `filter()` quitaría elementos.
 - **Por qué spread:** copia las propiedades y sustituye solo `completada`, así el objeto original no cambia.
 - **Evidencia:** con una versión que mutaba (`find` + asignación) fallaron 2 pruebas: la de alternar el estado (los dos resultados compartían el mismo objeto) y la de no modificar el original.
+
+### 6. Eliminar por id con filter() (Misión 7)
+- **Antes:** `eliminar(i)` hacía `tareas.splice(i, 1)` usando la posición, era una función global por el `onclick` y además redibujaba.
+- **Después:** `eliminarTarea(tareas, id)` devuelve `tareas.filter(t => t.id !== id)`.
+- **Por qué filter():** eliminar es "conservar todas excepto una". `map()` no puede quitar elementos y `find()` solo localiza uno.
+- **Caso frontera descubierto:** con `findIndex` + `splice`, un id inexistente da `-1` y `splice(-1, 1)` borra la **última** tarea. La prueba "id inexistente" compara contra valores fijos (`[1, 2]`), porque comparar contra el arreglo original no sirve si ese original también fue modificado.
+- **Evidencia:** la variante con `splice` falla 2 pruebas (`evidencias/m07-splice-rojo.png`).
 
 ## Extensión elegida (Misión 11)
 
