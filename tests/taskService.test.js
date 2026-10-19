@@ -5,7 +5,8 @@ import {
   agregarTarea,
   buscarTarea,
   obtenerPendientes,
-  obtenerTerminadas
+  obtenerTerminadas,
+  cambiarEstado
 } from "../src/taskService.js";
 
 // Las pruebas de cada misión se agregan en este archivo.
@@ -188,5 +189,56 @@ describe("Misión 5 · obtenerPendientes / obtenerTerminadas", () => {
 
     // Assert
     expect(mixta).toEqual(copia);
+  });
+});
+
+
+describe("Misión 6 · cambiarEstado", () => {
+  it("cambia el estado de la tarea indicada (pendiente ↔ terminada)", () => {
+    // Arrange
+    const tareas = [crearTarea(1, "Revisar requisitos"), crearTarea(2, "Diseñar pruebas")];
+
+    // Act
+    const unaVez = cambiarEstado(tareas, 2);
+    const dosVeces = cambiarEstado(unaVez, 2);
+
+    // Assert
+    expect(buscarTarea(unaVez, 2).completada).toBe(true);
+    expect(buscarTarea(dosVeces, 2).completada).toBe(false);
+  });
+
+  it("no altera las demás tareas", () => {
+    // Arrange
+    const tareas = [crearTarea(1, "Revisar requisitos"), crearTarea(2, "Diseñar pruebas")];
+
+    // Act
+    const resultado = cambiarEstado(tareas, 2);
+
+    // Assert
+    expect(resultado[0]).toEqual({ id: 1, titulo: "Revisar requisitos", completada: false });
+  });
+
+  it("con un id inexistente conserva el contenido", () => {
+    // Arrange
+    const tareas = [crearTarea(1, "Revisar requisitos"), crearTarea(2, "Diseñar pruebas")];
+
+    // Act
+    const resultado = cambiarEstado(tareas, 99);
+
+    // Assert
+    expect(resultado).toEqual(tareas);
+  });
+
+  it("no modifica el objeto original (usa spread)", () => {
+    // Arrange
+    const original = crearTarea(1, "Revisar requisitos");
+    const tareas = [original];
+
+    // Act
+    const resultado = cambiarEstado(tareas, 1);
+
+    // Assert
+    expect(original.completada).toBe(false);
+    expect(resultado[0]).not.toBe(original);
   });
 });

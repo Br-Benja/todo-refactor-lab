@@ -34,7 +34,7 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | M3 | Benjamín | Leonardo | `agregarTarea` devuelve un arreglo nuevo + 3 pruebas · `evidencias/m03-verde.png` |
 | M4 | Leonardo | Benjamín | `buscarTarea` con `find()` + 3 pruebas · `evidencias/m04-verde.png` |
 | M5 | Benjamín | Leonardo | `obtenerPendientes` / `obtenerTerminadas` con `filter()` + 4 pruebas · `evidencias/m05-verde.jpeg` |
-| M6 | | | |
+| M6 | Leonardo | Benjamín | `cambiarEstado` con `map()` + spread + 4 pruebas · `evidencias/m06-verde.png`, `evidencias/m06-mutacion-rojo.png` |
 | M7 | | | |
 | M8 | | | |
 | M9 | | | |
@@ -81,7 +81,10 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 | 11 | `obtenerPendientes` | Ninguna pendiente | Frontera | `[]` |
 | 12 | `obtenerPendientes` / `obtenerTerminadas` | Colección vacía | Frontera | `[]` en ambas |
 | 13 | `obtenerPendientes` / `obtenerTerminadas` | Inmutabilidad | Frontera | La colección original queda igual a su copia |
-
+| 14 | `cambiarEstado` | Cambiar el id 2 una vez y luego otra | Normal | `completada`: `true` y después `false` |
+| 15 | `cambiarEstado` | Las demás tareas | Normal | La tarea 1 queda igual |
+| 16 | `cambiarEstado` | Id inexistente (99) | Error | El resultado es igual al original |
+| 17 | `cambiarEstado` | Inmutabilidad | Frontera | El objeto original sigue en `false` y el resultado es otro objeto |
 ## Pruebas de integración manual
 
 ## Decisiones de refactor
@@ -111,6 +114,13 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 - **Por qué filter():** selecciona los elementos que cumplen una condición y devuelve un arreglo nuevo, sin transformarlos. `find()` solo devolvería el primero.
 - **Pregunta del caso:** cuando no hay coincidencias, `filter()` devuelve `[]`, no `undefined`. Así quien la usa puede recorrer el resultado sin validar.
 - **Separación datos/vista:** la función decide qué tareas cumplen la condición; cómo se muestran lo decide `app.js` en la Misión 9.
+
+### 5. Cambiar estado con map() + spread (Misión 6)
+- **Antes:** con strings no existía el estado; la opción "directa" sería buscar la tarea y hacer `tarea.completada = true`, lo que modifica el objeto compartido.
+- **Después:** `cambiarEstado` usa `map()` y, solo para la tarea con ese id, crea una copia con `{ ...tarea, completada: !tarea.completada }`. Las demás tareas pasan igual.
+- **Por qué map():** la operación transforma la colección y devuelve otra del mismo tamaño. `forEach()` no devuelve nada y `filter()` quitaría elementos.
+- **Por qué spread:** copia las propiedades y sustituye solo `completada`, así el objeto original no cambia.
+- **Evidencia:** con una versión que mutaba (`find` + asignación) fallaron 2 pruebas: la de alternar el estado (los dos resultados compartían el mismo objeto) y la de no modificar el original.
 
 ## Extensión elegida (Misión 11)
 

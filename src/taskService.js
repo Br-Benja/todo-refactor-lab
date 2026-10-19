@@ -35,7 +35,16 @@ export function obtenerTerminadas(tareas) {
   return tareas.filter(t => t.completada);
 }
 
+// Misión 6 · map() produce una colección nueva; spread crea una tarea nueva
+// sólo para la que cambia, sin modificar el objeto original.
+export function cambiarEstado(tareas, id) {
+  return tareas.map(tarea =>
+    tarea.id === id
+      ? { ...tarea, completada: !tarea.completada }
+      : tarea
+  );
+}
+
 // Pendientes:
-// Misión 6 · cambiarEstado(tareas, id)            -> map() + spread
 // Misión 7 · eliminarTarea(tareas, id)            -> filter()
 // Misión 8 · obtenerResumen(tareas)
