@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { tareasIniciales, crearTarea, agregarTarea, buscarTarea } from "../src/taskService.js";;
+import {
+  tareasIniciales,
+  crearTarea,
+  agregarTarea,
+  buscarTarea,
+  obtenerPendientes,
+  obtenerTerminadas
+} from "../src/taskService.js";
 
 // Las pruebas de cada misión se agregan en este archivo.
 // Cada prueba sigue la estructura Arrange → Act → Assert.
@@ -119,5 +126,67 @@ describe("Misión 4 · buscarTarea", () => {
 
     // Assert
     expect(encontrada).toBeUndefined();
+  });
+});
+
+
+describe("Misión 5 · obtenerPendientes / obtenerTerminadas", () => {
+  // Colección mixta: 2 pendientes y 1 terminada.
+  const mixta = [
+    { id: 1, titulo: "Revisar requisitos", completada: true },
+    { id: 2, titulo: "Diseñar pruebas", completada: false },
+    { id: 3, titulo: "Refactorizar código", completada: false }
+  ];
+
+  it("en una colección mixta separa pendientes y terminadas", () => {
+    // Arrange
+    const tareas = mixta;
+
+    // Act
+    const pendientes = obtenerPendientes(tareas);
+    const terminadas = obtenerTerminadas(tareas);
+
+    // Assert
+    expect(pendientes.map(t => t.id)).toEqual([2, 3]);
+    expect(terminadas.map(t => t.id)).toEqual([1]);
+  });
+
+  it("si ninguna está pendiente devuelve un arreglo vacío", () => {
+    // Arrange
+    const tareas = [
+      { id: 1, titulo: "Revisar requisitos", completada: true },
+      { id: 2, titulo: "Diseñar pruebas", completada: true }
+    ];
+
+    // Act
+    const pendientes = obtenerPendientes(tareas);
+
+    // Assert
+    expect(pendientes).toEqual([]);
+  });
+
+  it("con una colección vacía ambas devuelven un arreglo vacío", () => {
+    // Arrange
+    const tareas = [];
+
+    // Act
+    const pendientes = obtenerPendientes(tareas);
+    const terminadas = obtenerTerminadas(tareas);
+
+    // Assert
+    expect(pendientes).toEqual([]);
+    expect(terminadas).toEqual([]);
+  });
+
+  it("no modifica la colección original", () => {
+    // Arrange
+    const copia = structuredClone(mixta);
+
+    // Act
+    obtenerPendientes(mixta);
+    obtenerTerminadas(mixta);
+
+    // Assert
+    expect(mixta).toEqual(copia);
   });
 });

@@ -26,9 +26,16 @@ export function buscarTarea(tareas, id) {
   return tareas.find(t => t.id === id);
 }
 
+// Misión 5 · filter() selecciona un subconjunto sin alterar la colección.
+export function obtenerPendientes(tareas) {
+  return tareas.filter(t => !t.completada);
+}
+
+export function obtenerTerminadas(tareas) {
+  return tareas.filter(t => t.completada);
+}
+
 // Pendientes:
-// Misión 5 · obtenerPendientes(tareas)            -> filter()
-//            obtenerTerminadas(tareas)            -> filter()
 // Misión 6 · cambiarEstado(tareas, id)            -> map() + spread
 // Misión 7 · eliminarTarea(tareas, id)            -> filter()
 // Misión 8 · obtenerResumen(tareas)

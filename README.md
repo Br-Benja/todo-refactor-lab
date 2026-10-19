@@ -31,8 +31,9 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | M0 | Leonardo | Benjamín | Análisis del legacy y 5 comportamientos a conservar · `evidencias/m00-legacy-inyeccion.png` |
 | M1 | Benjamín | Leonardo | Tareas como objetos `{id, titulo, completada}` + 2 pruebas · `evidencias/m01-pruebas-verde.jpeg` |
 | M2 | Leonardo | Benjamín | `crearTarea` con la prueba escrita primero (RED → GREEN) · `evidencias/m02-red.png`, `evidencias/m02-red-error.png`, `evidencias/m02-green.png` |
+| M3 | Benjamín | Leonardo | `agregarTarea` devuelve un arreglo nuevo + 3 pruebas · `evidencias/m03-verde.png` |
 | M4 | Leonardo | Benjamín | `buscarTarea` con `find()` + 3 pruebas · `evidencias/m04-verde.png` |
-| M5 | | | |
+| M5 | Benjamín | Leonardo | `obtenerPendientes` / `obtenerTerminadas` con `filter()` + 4 pruebas · `evidencias/m05-verde.jpeg` |
 | M6 | | | |
 | M7 | | | |
 | M8 | | | |
@@ -76,6 +77,10 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 | 7 | `buscarTarea` | Id existente (2) | Normal | Devuelve `{ id: 2, titulo: "Diseñar pruebas", completada: false }` |
 | 8 | `buscarTarea` | Id inexistente (99) | Error | `undefined` |
 | 9 | `buscarTarea` | Colección vacía | Frontera | `undefined` |
+| 10 | `obtenerPendientes` / `obtenerTerminadas` | Colección mixta (1 terminada, 2 pendientes) | Normal | Pendientes ids `[2, 3]`; terminadas ids `[1]` |
+| 11 | `obtenerPendientes` | Ninguna pendiente | Frontera | `[]` |
+| 12 | `obtenerPendientes` / `obtenerTerminadas` | Colección vacía | Frontera | `[]` en ambas |
+| 13 | `obtenerPendientes` / `obtenerTerminadas` | Inmutabilidad | Frontera | La colección original queda igual a su copia |
 
 ## Pruebas de integración manual
 
@@ -99,6 +104,13 @@ Con strings, cada dato nuevo sería otro arreglo paralelo, y agregar o eliminar 
 - **Después:** `buscarTarea(tareas, id)` usa `tareas.find(t => t.id === id)`.
 - **Por qué find():** comunica "encontrar una". Se detiene en la primera coincidencia y devuelve el elemento o `undefined`; `filter()` devolvería un arreglo aunque solo hubiera una coincidencia.
 - **Casos frontera:** id inexistente y colección vacía devuelven `undefined`, sin lanzar error. Quien llame a la función debe contemplar ese caso.
+
+### 4. Vistas con filter() (Misión 5)
+- **Antes:** el legacy tenía el filtro `disabled` porque con strings no había estado que filtrar.
+- **Después:** `obtenerPendientes` usa `filter(t => !t.completada)` y `obtenerTerminadas` usa `filter(t => t.completada)`.
+- **Por qué filter():** selecciona los elementos que cumplen una condición y devuelve un arreglo nuevo, sin transformarlos. `find()` solo devolvería el primero.
+- **Pregunta del caso:** cuando no hay coincidencias, `filter()` devuelve `[]`, no `undefined`. Así quien la usa puede recorrer el resultado sin validar.
+- **Separación datos/vista:** la función decide qué tareas cumplen la condición; cómo se muestran lo decide `app.js` en la Misión 9.
 
 ## Extensión elegida (Misión 11)
 
