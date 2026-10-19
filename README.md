@@ -42,6 +42,8 @@ La interfaz se abre con **Live Server** sobre `index.html`.
 | M10 | Leonardo | Benjamín | Refactor: reglas de `app.js` al dominio + `actualizar()` + 8 pruebas · `evidencias/m10-verde.png`, `evidencias/m10-app-sin-cambios.png` |
 | M11 | Benjamín | Leonardo | Opción D: evitar títulos duplicados con `some()` + 8 pruebas (RED → GREEN) · `evidencias/m11-red.png`, `evidencias/m11-green.png`, `evidencias/m11-app-duplicado.png`, `evidencias/m11-app-duplicado-terminada.jpeg`, `evidencias/m11-app-reutilizar.png` |
 | Final | Leonardo | Benjamín | README técnico, reflexión e historial · `evidencias/final-historial-commits.png` |
+| Final | Benjamín | Leonardo | README técnico, entregables y reflexión |
+| Final (corrección) | Leonardo | Benjamín | Capturas finales y renombre de evidencia · `evidencias/m11-app-reutilizar.png`, `evidencias/final-historial-commits.png` |
 
 ## Misión 0 · Análisis del código legacy
 **¿Dónde almacenarías ahora el estado completada de una tarea?**
